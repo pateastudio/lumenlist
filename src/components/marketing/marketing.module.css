@@ -1,0 +1,768 @@
+/*
+ * Quiet Cover: a calm cover, a gingham blanket to play on, and four steps acted out on a phone.
+ * Colors come from theme tokens only, so the page follows the Picnic, Confetti and Patea themes.
+ */
+
+/* ---------- Surfaces ---------- */
+
+.gingham {
+  --check: color-mix(in oklab, var(--card) 34%, transparent);
+  position: relative;
+  background-color: var(--hero);
+  background-image:
+    linear-gradient(90deg, var(--check) 50%, transparent 50%),
+    linear-gradient(var(--check) 50%, transparent 50%),
+    var(--hero-image);
+  background-size: 64px 64px, 64px 64px, auto;
+  border-block: var(--ink-width) solid var(--border-strong);
+}
+
+.ginghamEnd {
+  border-bottom: 0;
+}
+
+/* A dashed line just inside the edge, like the stitching on a blanket hem. */
+.gingham::after {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border: 2px dashed color-mix(in oklab, var(--foreground) 38%, transparent);
+  border-radius: 14px;
+  pointer-events: none;
+}
+
+/* The blanket's fringe: little ink tassels past each end. */
+.fringeTop,
+.fringeBottom {
+  position: absolute;
+  inset-inline: 0;
+  height: 11px;
+  background: repeating-linear-gradient(90deg, var(--border-strong) 0 2px, transparent 2px 10px);
+  pointer-events: none;
+}
+.fringeTop {
+  bottom: 100%;
+  margin-bottom: var(--ink-width);
+}
+.fringeBottom {
+  top: 100%;
+  margin-top: var(--ink-width);
+}
+
+/* ---------- Small ink details ---------- */
+
+.marker {
+  background-image: linear-gradient(transparent 56%, var(--hero) 56%, var(--hero) 92%, transparent 92%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding-inline: 0.08em;
+  margin-inline: -0.08em;
+}
+
+.inkStar {
+  fill: var(--hero);
+  stroke: var(--foreground);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+.inkStarPrimary {
+  fill: var(--primary);
+}
+
+.float {
+  animation: floaty 6s ease-in-out infinite;
+}
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+  50% { transform: translateY(-8px) rotate(calc(var(--rot, 0deg) + 1.5deg)); }
+}
+
+.tape {
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  width: 92px;
+  height: 26px;
+  margin-left: -46px;
+  rotate: var(--tape-r, -4deg);
+  background: color-mix(in oklab, var(--secondary) 82%, transparent);
+  border-left: 2px dotted color-mix(in oklab, var(--foreground) 35%, transparent);
+  border-right: 2px dotted color-mix(in oklab, var(--foreground) 35%, transparent);
+  box-shadow: 0 1px 0 color-mix(in oklab, var(--foreground) 18%, transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.pin {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  border-radius: 999px;
+  background: var(--primary);
+  border: var(--ink-width) solid var(--border-strong);
+  box-shadow: 2px 2px 0 var(--border-strong);
+  pointer-events: none;
+  z-index: 2;
+}
+.pin::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--primary-foreground) 75%, transparent);
+}
+
+/* A sticker: sits at an angle, straightens when you point at it. */
+.sticker {
+  --r: 0deg;
+  rotate: var(--r);
+  transition: rotate 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), scale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@media (hover: hover) {
+  .sticker:hover {
+    rotate: calc(var(--r) * -0.5);
+    scale: 1.06;
+  }
+}
+
+.squiggle {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 0;
+}
+.spread[data-seen="false"] .squiggle {
+  stroke-dashoffset: 300;
+}
+.spread[data-seen="true"] .squiggle {
+  animation: draw 0.9s ease-out 0.9s backwards;
+}
+@keyframes draw {
+  from { stroke-dashoffset: 300; }
+}
+
+/* ---------- Room two: pieces on the blanket ---------- */
+
+.spread {
+  --mx: 0;
+  --my: 0;
+  position: relative;
+}
+
+.piece {
+  --r: 0deg;
+  --s: 1;
+  --d: 0;
+  --i: 0;
+  --lift: 0px;
+  position: relative;
+  rotate: var(--r);
+  scale: var(--s);
+  transform-origin: center;
+  transition:
+    rotate 0.38s cubic-bezier(0.34, 1.56, 0.64, 1),
+    scale 0.38s cubic-bezier(0.34, 1.56, 0.64, 1),
+    translate 0.3s cubic-bezier(0.2, 0.8, 0.3, 1),
+    filter 0.3s ease;
+}
+.loose {
+  --r: 0deg;
+  --i: 0;
+  rotate: var(--r);
+  pointer-events: none;
+}
+
+/* The pieces drop onto the blanket the first time it scrolls into view. */
+.spread[data-seen="false"] .piece,
+.spread[data-seen="false"] .loose {
+  opacity: 0;
+}
+.spread[data-seen="true"] .piece {
+  animation: drop 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.15) backwards;
+  animation-delay: calc(var(--i) * 110ms + 80ms);
+}
+.spread[data-seen="true"] .loose {
+  animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  animation-delay: calc(var(--i) * 110ms + 260ms);
+}
+@keyframes drop {
+  from {
+    opacity: 0;
+    translate: 0 -64px;
+    rotate: calc(var(--r) + 10deg);
+    scale: calc(var(--s) * 1.08);
+  }
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    scale: 0.4;
+    rotate: calc(var(--r) - 14deg);
+  }
+}
+
+/* The cover that makes a card at the back of the phone deck one big "bring me forward" button. */
+.cover {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border-radius: 14px;
+  cursor: pointer;
+}
+.cover:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+
+/* Phone and tablet: a deck of overlapping cards. The front one is live; tap a back one to pull it out. */
+@media (max-width: 1023.98px) {
+  .deck {
+    display: grid;
+    justify-items: center;
+    align-items: stretch;
+  }
+  .deck > .piece {
+    grid-area: 1 / 1;
+    width: min(320px, 82vw);
+  }
+  .deck > .piece[data-pos="front"] {
+    rotate: -1.5deg;
+    z-index: 3;
+  }
+  .deck > .piece[data-pos="right"] {
+    translate: 12% 10px;
+    rotate: 6deg;
+    scale: 0.93;
+    z-index: 2;
+  }
+  .deck > .piece[data-pos="left"] {
+    translate: -12% 14px;
+    rotate: -7deg;
+    scale: 0.93;
+    z-index: 1;
+  }
+}
+
+/* Desktop: a long collage across the blanket. Every piece has its own place, angle and depth. */
+@media (min-width: 1024px) {
+  .spread {
+    width: 1100px;
+    height: 560px;
+  }
+  .deck {
+    display: contents;
+  }
+  .cover {
+    display: none;
+  }
+  .spread .piece {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--w);
+    z-index: var(--z, 1);
+    translate: calc(var(--mx) * var(--d) * 1px) calc(var(--my) * var(--d) * 1px + var(--lift));
+  }
+  .spread .loose {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    z-index: var(--z, 6);
+  }
+  .spread .piece[data-active="true"],
+  .spread .piece:focus-within {
+    --lift: -8px;
+    rotate: 0deg;
+    scale: 1;
+    z-index: 20;
+    filter: drop-shadow(8px 12px 0 color-mix(in oklab, var(--foreground) 16%, transparent));
+  }
+}
+@media (min-width: 1024px) and (max-width: 1239.98px) {
+  .spread {
+    zoom: 0.84;
+  }
+}
+@media (min-width: 1024px) and (hover: hover) {
+  .spread .piece:hover {
+    --lift: -8px;
+    rotate: 0deg;
+    scale: 1;
+    z-index: 21;
+    filter: drop-shadow(8px 12px 0 color-mix(in oklab, var(--foreground) 16%, transparent));
+  }
+}
+
+.badgePop {
+  animation: badge 0.55s cubic-bezier(0.34, 1.7, 0.64, 1);
+}
+@keyframes badge {
+  from {
+    scale: 0.2;
+    rotate: -25deg;
+  }
+}
+
+/* ---------- Room three: the steps and the phone ---------- */
+
+.steps {
+  --view-h: clamp(300px, 45svh, 430px);
+  --cap-h: 56px;
+  --stage-h: calc(var(--view-h) + var(--cap-h) + 26px);
+  --far: 0.62;
+  /* Keeps the 48px "I'll get this" at 44px or more as drawn (48 x 0.93 = 44.6). Don't go lower
+     without measuring it again; an e2e test checks it. */
+  --near: 0.93;
+}
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: repeat(5, auto);
+}
+.intro {
+  grid-column: 1;
+  grid-row: 1;
+}
+.stage {
+  grid-column: 1;
+  grid-row: 2 / -1;
+  align-self: start;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin-inline: -1rem;
+  padding: 8px 1rem 8px;
+  background: var(--background);
+}
+.stage::after {
+  content: "";
+  position: absolute;
+  inset: 100% 0 auto 0;
+  height: 22px;
+  background: linear-gradient(to bottom, var(--background), transparent);
+  pointer-events: none;
+}
+.step {
+  grid-column: 1;
+  grid-row: var(--row);
+  min-height: 70svh;
+  padding-top: 2rem;
+  transition: opacity 0.4s ease;
+}
+.step:first-of-type {
+  padding-top: calc(var(--stage-h) + 2.25rem);
+  min-height: calc(var(--stage-h) + 62svh);
+}
+.step:last-of-type {
+  min-height: 58svh;
+}
+/* The caption above the phone: whose phone it is, or (in step 4) the switch between the two. */
+.cap {
+  height: var(--cap-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The window the phone is seen through. On small screens the phone is drawn at full size and
+   scaled down to fit ("far"); for the step you tap in, the camera moves in ("near"). */
+.view {
+  position: relative;
+  height: var(--view-h);
+  overflow: clip;
+}
+.scaler {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 376px;
+  margin-left: -188px;
+  height: calc((var(--view-h) - 24px) / var(--far));
+  transform-origin: 50% 0;
+  transform: scale(var(--far));
+  transition: transform 0.6s cubic-bezier(0.3, 0.8, 0.2, 1);
+}
+/* Up close the phone also sits 4px higher. At the shortest window that is what lets the first gift's
+   title clear the app bar while its button still ends above the fade (the phone reads this offset). */
+.view[data-zoom="near"] .scaler {
+  top: 6px;
+  transform: scale(var(--near));
+}
+/* Up close the phone runs off the bottom of the window: fade it out instead of cutting it. */
+.view::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 36px;
+  background: linear-gradient(to bottom, transparent, var(--background));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+/* Short up close, so the gift's title and its button both fit in the shortest window. The phone
+   reads this height to place the button clear of it. */
+.view[data-zoom="near"]::after {
+  height: 16px;
+  opacity: 1;
+}
+
+.persp {
+  height: 100%;
+  perspective: 1500px;
+  perspective-origin: 50% 40%;
+}
+.tilt {
+  position: relative;
+  height: 100%;
+  border-radius: 2.4rem;
+  transform-style: preserve-3d;
+}
+
+/* Two identical hops, so each flip can restart the animation by switching names. */
+.tilt[data-hop="a"] {
+  animation: hop-a 760ms cubic-bezier(0.3, 0, 0.3, 1);
+}
+.tilt[data-hop="b"] {
+  animation: hop-b 760ms cubic-bezier(0.3, 0, 0.3, 1);
+}
+@keyframes hop-a {
+  45% { translate: 0 -18px; scale: 1.045; }
+}
+@keyframes hop-b {
+  45% { translate: 0 -18px; scale: 1.045; }
+}
+
+.flipper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  transform-style: preserve-3d;
+  transition: transform 760ms cubic-bezier(0.34, 1.3, 0.5, 1);
+}
+.face {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(7px);
+  transition: visibility 0s;
+}
+.back {
+  transform: rotateY(180deg) translateZ(7px);
+}
+/* Once the turn is over the far face is really gone, so nothing on it can be tapped or read out. */
+.face[data-hidden="true"] {
+  visibility: hidden;
+  pointer-events: none;
+  transition: visibility 0s linear 760ms;
+}
+/* The phone's thickness: ink slices between the two faces. */
+.slab {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--border-strong);
+  transform: translateZ(var(--z));
+  pointer-events: none;
+}
+/* The sticker shadow belongs to the table, so it doesn't turn with the phone: it squashes instead. */
+.shadow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--border-strong);
+  transform: translate3d(9px, 10px, -24px);
+  pointer-events: none;
+}
+.tilt[data-hop="a"] .shadow {
+  animation: squash-a 760ms cubic-bezier(0.34, 1.1, 0.5, 1);
+}
+.tilt[data-hop="b"] .shadow {
+  animation: squash-b 760ms cubic-bezier(0.34, 1.1, 0.5, 1);
+}
+@keyframes squash-a {
+  45% { transform: translate3d(14px, 22px, -24px) scaleX(0.12); opacity: 0.55; }
+}
+@keyframes squash-b {
+  45% { transform: translate3d(14px, 22px, -24px) scaleX(0.12); opacity: 0.55; }
+}
+
+/* The screen inside the phone. Small screens: no scroll area inside the page (a list inside a list
+   traps the thumb); the page moves it for you. */
+.screen {
+  position: relative;
+  overflow: hidden;
+}
+.screen:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: -3px;
+}
+/* The screen is as wide as a phone whatever the window is, so the list's filter stays full width in
+   it (its own breakpoints follow the window). Unlayered, so it wins over the utility classes. */
+.screen :global([data-slot="toggle-group"]) {
+  width: 100%;
+}
+.screen :global([data-slot="toggle-group-item"]) {
+  flex: 1 1 0%;
+}
+
+/* Step 3: a hand-written nudge on the first card, and a ring that breathes around its button. */
+.screen[data-nudge="true"] :global(ul.grid) > li:first-child {
+  position: relative;
+}
+.screen[data-nudge="true"] :global(ul.grid) > li:first-child::after {
+  content: "Go on, tap it";
+  position: absolute;
+  right: 10px;
+  top: 116px;
+  z-index: 3;
+  padding: 0.3rem 0.8rem;
+  border: var(--ink-width) solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--hero);
+  color: var(--foreground);
+  box-shadow: var(--shadow-button);
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  font-size: 0.95rem;
+  line-height: 1.2;
+  pointer-events: none;
+  animation: nudge 1.6s ease-in-out infinite;
+}
+@keyframes nudge {
+  0%, 100% { transform: translateY(0) rotate(4deg); }
+  50% { transform: translateY(5px) rotate(4deg); }
+}
+.screen[data-nudge="true"] :global(ul.grid) > li:first-child :global([data-claim-state="available"]) > button {
+  outline: 3px solid color-mix(in oklab, var(--primary) 55%, transparent);
+  animation: ring 1.6s ease-in-out infinite;
+}
+@keyframes ring {
+  0%, 100% { outline-offset: 2px; }
+  50% { outline-offset: 7px; }
+}
+
+/* Step 4: the stamp that lands once the phone has turned. */
+.stamp {
+  position: absolute;
+  right: 0.25rem;
+  bottom: 0.9rem;
+  z-index: 6;
+  rotate: -5deg;
+  pointer-events: none;
+  animation: stamp 0.55s cubic-bezier(0.3, 1.6, 0.5, 1) 0.8s backwards;
+}
+@keyframes stamp {
+  from {
+    opacity: 0;
+    scale: 2.2;
+    rotate: -22deg;
+  }
+}
+
+.pulse {
+  animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { scale: 1; }
+  50% { scale: 1.04; }
+}
+
+@media (min-width: 1024px) {
+  .steps {
+    --phone-h: min(40rem, calc(100svh - 9rem));
+    --stage-h: calc(var(--phone-h) + var(--cap-h) + 14px);
+  }
+  .grid {
+    grid-template-columns: minmax(0, 1fr) 23.5rem;
+    column-gap: clamp(3rem, 9vw, 8rem);
+  }
+  .stage {
+    display: block;
+    grid-column: 2;
+    grid-row: 1 / -1;
+    top: max(1rem, calc(50svh - var(--stage-h) / 2));
+    margin: 0;
+    padding: 0;
+    background: none;
+  }
+  .stage::after {
+    display: none;
+  }
+  .step,
+  .step:first-of-type,
+  .step:last-of-type {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 82svh;
+    padding: 0;
+  }
+  .step:first-of-type {
+    justify-content: flex-start;
+    min-height: 56svh;
+    padding-top: 3.5rem;
+  }
+  .step:last-of-type {
+    min-height: 78svh;
+  }
+  .step[data-current="false"] {
+    opacity: 0.3;
+  }
+  .cap {
+    margin-bottom: 14px;
+  }
+  .view {
+    height: var(--phone-h);
+    overflow: visible;
+  }
+  .view::after {
+    display: none;
+  }
+  .scaler,
+  .view[data-zoom="near"] .scaler {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    transform: none;
+  }
+  .screen {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .stamp {
+    right: -0.75rem;
+    bottom: 2.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .stamp {
+    right: -2.25rem;
+  }
+}
+
+/* A mouse on a wide screen: the phone sits at a slight angle and goes flat while you use it. */
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .tilt {
+    transform: rotateX(4deg) rotateY(-11deg);
+    transition: transform 450ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .tilt[data-engaged="true"] {
+    transform: none;
+  }
+}
+
+/* ---------- Cause and effect: the shopping card reacts when you claim ---------- */
+
+.bumpA {
+  animation: wiggleA 0.7s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.bumpB {
+  animation: wiggleB 0.7s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+@keyframes wiggleA {
+  0% { transform: none; }
+  25% { transform: rotate(-3deg) scale(1.04); }
+  55% { transform: rotate(2.5deg) scale(1.04); }
+  100% { transform: none; }
+}
+@keyframes wiggleB {
+  0% { transform: none; }
+  25% { transform: rotate(-3deg) scale(1.04); }
+  55% { transform: rotate(2.5deg) scale(1.04); }
+  100% { transform: none; }
+}
+
+.freshRow {
+  animation: fresh 2.2s ease-out;
+}
+@keyframes fresh {
+  0% {
+    background-color: var(--secondary);
+    transform: translateX(-10px);
+    opacity: 0;
+  }
+  18% {
+    transform: none;
+    opacity: 1;
+  }
+  70% {
+    background-color: var(--secondary);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+/* ---------- Reduced motion: everything is simply there ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .float,
+  .pulse,
+  .badgePop,
+  .bumpA,
+  .bumpB,
+  .freshRow,
+  .stamp {
+    animation: none !important;
+  }
+  .spread .piece,
+  .spread .loose,
+  .spread .squiggle {
+    animation: none !important;
+    opacity: 1 !important;
+    stroke-dashoffset: 0 !important;
+  }
+  .piece,
+  .sticker,
+  .step,
+  .scaler {
+    transition: none;
+  }
+  .spread {
+    --mx: 0 !important;
+    --my: 0 !important;
+  }
+  .tilt {
+    transform: none !important;
+    animation: none !important;
+    transition: none;
+  }
+  /* Cross-fade in place of the flip. */
+  .flipper {
+    transform: none !important;
+    transition: none;
+  }
+  .face,
+  .back {
+    transform: none;
+    backface-visibility: visible;
+    transition: opacity 240ms ease, visibility 0s;
+  }
+  .face[data-hidden="true"] {
+    opacity: 0;
+    transition: opacity 240ms ease, visibility 0s linear 240ms;
+  }
+  .slab {
+    display: none;
+  }
+  .shadow {
+    animation: none !important;
+    transform: translate(6px, 7px);
+  }
+  .screen[data-nudge="true"] :global(ul.grid) > li:first-child::after,
+  .screen[data-nudge="true"] :global(ul.grid) > li:first-child :global([data-claim-state="available"]) > button {
+    animation: none;
+  }
+}

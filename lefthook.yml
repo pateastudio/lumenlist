@@ -1,0 +1,20 @@
+# Copy to a repo's root as lefthook.yml, then run `lefthook install`.
+# The same checks CI runs, so a failure shows up before the push, not after.
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      run: pnpm run lint
+    typecheck:
+      run: pnpm run typecheck
+    terraform-fmt:
+      glob: "*.tf"
+      run: terraform fmt -check -recursive
+
+commit-msg:
+  commands:
+    conventional-commits:
+      # type(scope): subject. Merge commits are exempt.
+      run: |
+        head -n1 {1} | grep -Eq '^(Merge |(feat|fix|docs|chore|refactor|test|ci|build|perf|revert)(\([a-z0-9-]+\))?!?: .+)' \
+          || { echo "Use a conventional commit: type(scope): subject  (feat, fix, docs, chore, refactor, test, ci, build, perf, revert)"; exit 1; }

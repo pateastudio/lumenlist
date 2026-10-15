@@ -1,0 +1,445 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-display);
+  --color-success: var(--success);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border-strong: var(--border-strong);
+  --color-tone-0-bg: var(--tone-0-bg);
+  --color-tone-0-fg: var(--tone-0-fg);
+  --color-tone-1-bg: var(--tone-1-bg);
+  --color-tone-1-fg: var(--tone-1-fg);
+  --color-tone-2-bg: var(--tone-2-bg);
+  --color-tone-2-fg: var(--tone-2-fg);
+  --color-tone-3-bg: var(--tone-3-bg);
+  --color-tone-3-fg: var(--tone-3-fg);
+  --shadow-card: var(--shadow-card);
+  --shadow-button: var(--shadow-button);
+  --shadow-button-pressed: var(--shadow-button-pressed);
+  --shadow-button-outline: var(--shadow-button-outline);
+  --shadow-button-outline-pressed: var(--shadow-button-outline-pressed);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-button: var(--radius-button);
+  --radius-field: var(--radius-field);
+  --radius-chip: var(--radius-chip);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/*
+ * THEMES
+ *
+ * Every theme is one block that sets the same tokens in the same order (copy the Picnic block
+ * and change values; components only read tokens, never raw values).
+ *
+ * Add a theme:
+ *   1. Copy a block below, rename its selector to [data-theme="<name>"], change the values.
+ *   2. Add <name> to THEME_IDS in src/lib/themes.ts (layout.tsx and the picker read it), load
+ *      its fonts in src/app/layout.tsx with next/font (preload: false for an opt-in theme), and
+ *      add it to the picker in src/components/account/theme-picker.tsx.
+ *
+ * Change the default theme. It is exactly two steps:
+ *   1. Move the `:root,` line from Picnic's selector to the new default's selector (for
+ *      Patea: `:root,` above `[data-theme="patea"] {`). The default is declared once, here, so
+ *      no values are duplicated and the old default keeps working as an opt-in theme.
+ *   2. Set DEFAULT_THEME in src/lib/themes.ts (`"patea"`); layout.tsx passes it to
+ *      ThemeProvider's `defaultTheme` and the picker uses it as its fallback.
+ *   Font preloading is a separate, optional follow-up that should move with the default: in
+ *   layout.tsx drop `preload: false` from the new default's fonts (Newsreader and Instrument
+ *   Sans, so they get a <link rel="preload"> and the first paint has no font swap) and add it
+ *   to the old default's (Bricolage Grotesque and DM Sans). Nothing breaks if it is skipped.
+ *
+ * Tokens every theme defines beyond the shadcn set (Picnic and Confetti reproduce the look
+ * they had before these existed; a theme with other needs changes only values):
+ *   --display-weight, --display-weight-soft, --display-tracking   headings: font-(weight:--display-weight)
+ *   --button-weight, --label-weight    button text; chip, tab and badge text
+ *   --primary-hover                    filled button hover
+ *   --danger-surface                   fill of a danger button or zone
+ *   --radius-field, --radius-chip      inputs and textareas; status chips
+ *   --hover-lift, --press-scale, --button-transition   button motion (no-ops where 0 / 1)
+ */
+
+/* Sunday Picnic (default): hard ink outlines, offset shadows, tomato brand */
+:root,
+[data-theme="picnic"] {
+  /* Fonts: --font-bricolage and --font-dm-sans come from next/font in layout.tsx */
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --display-weight: 800; /* page and section headings (font-extrabold today) */
+  --display-weight-soft: 700; /* smaller display text: names, gift titles, avatars */
+  --display-tracking: -0.025em; /* tracking-tight */
+  --button-weight: 700; /* ink buttons */
+  --label-weight: 700; /* status chips, tab labels */
+
+  /* Surfaces and text */
+  --background: #FBF5E9;
+  --foreground: #23212B;
+  --card: #FFFFFF;
+  --card-foreground: #23212B;
+  --popover: #FFFFFF;
+  --popover-foreground: #23212B;
+
+  /* Brand */
+  /* --primary: #C8431B; */
+  --primary: #4169E1;
+  --primary-foreground: #FFFFFF;
+  --primary-hover: color-mix(in oklab, var(--primary) 90%, transparent); /* what hover:bg-primary/90 was */
+  --secondary: #FCE7A6;
+  --secondary-foreground: #4A3500;
+  --accent: #DCEEDF;
+  --accent-foreground: #2C5A38;
+  --muted: #F3ECDD;
+  --muted-foreground: #5B554B;
+
+  /* Lines and focus */
+  --border: #E2D8C4;
+  --input: #23212B;
+  /* --ring: #C8431B; */
+  --ring: #4169E1;
+  --border-strong: #23212B;
+
+  /* Status */
+  --destructive: #B3261E;
+  --destructive-foreground: #FFFFFF;
+  --success: #3F7A50;
+  --danger-surface: var(--card); /* fill of a danger button / zone: plain card here */
+
+  /* Shape and depth */
+  --radius: 0.75rem;
+  --radius-button: calc(var(--radius) * 0.8); /* what rounded-md was; Button and ink-button read it */
+  --radius-field: var(--radius); /* Input, Textarea */
+  --radius-chip: calc(var(--radius) * 0.8); /* StatusChip */
+  --ink-width: 2px;
+  --shadow-card: 4px 4px 0 var(--border-strong);
+  --shadow-button: 3px 3px 0 var(--border-strong);
+  --shadow-button-pressed: 1px 1px 0 var(--border-strong);
+  --shadow-button-outline: var(--shadow-button); /* outline buttons: neutral, not tied to --primary */
+  --shadow-button-outline-pressed: var(--shadow-button-pressed);
+  --button-border: var(--border-strong); /* filled ink button border */
+  --button-outline-border: var(--border-strong); /* outline ink button border */
+  --toggle-on: var(--muted); /* selected toggle / filter fill */
+  --press-shift: 2px;
+  --press-shift-x: 2px;
+  --hover-lift: 0px; /* ink buttons rise this far on hover */
+  --press-scale: 1; /* and scale to this while pressed */
+  --button-transition: transform, box-shadow, background-color, color; /* + translate, scale where they animate */
+
+  /* Hero band and the four avatar / gift-tile tones */
+  --hero: #F6C445;
+  --hero-image: none; /* a theme with a gradient hero sets this; --hero stays a solid fallback */
+  --tone-0-bg: #FFD9CC;
+  --tone-0-fg: #8A2A0C;
+  --tone-1-bg: #FCE7A6;
+  --tone-1-fg: #5E4300;
+  --tone-2-bg: #D5ECD9;
+  --tone-2-fg: #2C5A38;
+  --tone-3-bg: #D6E8F8;
+  --tone-3-fg: #1D4F7A;
+
+  /* Sidebar and charts (shadcn compat): usually left as these mappings */
+  --sidebar: var(--background);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--muted);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: color-mix(in oklab, var(--primary) 30%, transparent);
+  --chart-1: var(--primary);
+  --chart-2: var(--success);
+  --chart-3: var(--hero);
+  --chart-4: var(--destructive);
+  --chart-5: var(--muted-foreground);
+}
+
+/*
+ * Confetti: soft 2px borders, pill buttons with a pressable bottom shadow, big radii, a
+ * gradient hero. Opt-in through the picker on /account.
+ * Fredoka and Nunito load lazily (preload: false in layout.tsx).
+ */
+[data-theme="confetti"] {
+  /* Fonts */
+  --font-display: var(--font-fredoka), ui-rounded, ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --display-weight: 800;
+  --display-weight-soft: 700;
+  --display-tracking: -0.025em;
+  --button-weight: 700;
+  --label-weight: 700;
+
+  /* Surfaces and text */
+  --background: #FFFBF3;
+  --foreground: #2A2340;
+  --card: #FFFFFF;
+  --card-foreground: #2A2340;
+  --popover: #FFFFFF;
+  --popover-foreground: #2A2340;
+
+  /* Brand */
+  --primary: #DB2955;
+  --primary-foreground: #FFFFFF;
+  --primary-hover: color-mix(in oklab, var(--primary) 90%, transparent);
+  --secondary: #FFF1C7;
+  --secondary-foreground: #5C4100;
+  --accent: #DDF6F2;
+  --accent-foreground: #0B6158;
+  --muted: #F7F1E6;
+  --muted-foreground: #655D78;
+
+  /* Lines and focus */
+  --border: #EEE4D3;
+  --input: #8F85A6; /* 3.4:1 on card: a form field's boundary must reach 3:1 */
+  --ring: #DB2955;
+  --border-strong: #EEE4D3;
+
+  /* Status */
+  --destructive: #C62828;
+  --destructive-foreground: #FFFFFF;
+  --success: #0D8075;
+  --danger-surface: var(--card);
+
+  /* Shape and depth */
+  --radius: 1.25rem;
+  --radius-button: 999px;
+  --radius-field: var(--radius);
+  --radius-chip: calc(var(--radius) * 0.8);
+  --ink-width: 2px;
+  --shadow-card: none;
+  --shadow-button: 0 3px 0 color-mix(in oklab, var(--primary) 60%, black);
+  --shadow-button-pressed: 0 1px 0 color-mix(in oklab, var(--primary) 60%, black);
+  --shadow-button-outline: 0 3px 0 var(--input);
+  --shadow-button-outline-pressed: 0 1px 0 var(--input);
+  --button-border: transparent; /* the pink fill runs to the edge: no light ring */
+  --button-outline-border: var(--input);
+  --toggle-on: var(--secondary);
+  --press-shift: 2px;
+  --press-shift-x: 0px;
+  --hover-lift: 0px;
+  --press-scale: 1;
+  --button-transition: transform, box-shadow, background-color, color;
+
+  /* Hero band and the four avatar / gift-tile tones */
+  --hero: #FFF1C7;
+  --hero-image: linear-gradient(135deg, #FFE3EA 0%, #FFF1C7 55%, #DDF6F2 100%);
+  --tone-0-bg: #FFDCE4;
+  --tone-0-fg: #A3123A;
+  --tone-1-bg: #FFEBA8;
+  --tone-1-fg: #6E4D00;
+  --tone-2-bg: #C9F1EC;
+  --tone-2-fg: #0B6158;
+  --tone-3-bg: #E6DDFF;
+  --tone-3-fg: #5427C2;
+
+  /* Sidebar and charts (shadcn compat): usually left as these mappings */
+  --sidebar: var(--background);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--muted);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: color-mix(in oklab, var(--primary) 30%, transparent);
+  --chart-1: var(--primary);
+  --chart-2: var(--success);
+  --chart-3: var(--hero);
+  --chart-4: var(--destructive);
+  --chart-5: var(--muted-foreground);
+}
+
+/*
+ * Patea: the studio's own look. Cream page, paper cards with a hairline and a soft shadow, plum
+ * pill buttons, rose focus, Newsreader (serif, always 500) for headings and Instrument Sans for
+ * everything functional. Flat: no ink outlines, no offset shadows. Light only. Opt-in through the
+ * picker on /account. Newsreader and Instrument Sans load lazily (preload: false in layout.tsx).
+ * Values are the Patea design system's tokens (tokens/colors.css, effects.css, motion.css).
+ * Deviations, all for WCAG AA: --input is soil-600 (soil-400 is 2.9:1), --success and the sage
+ * tone and accent text are sage-deep 15% toward ink (#6E7461 is 4.2:1 on sage-tint).
+ */
+[data-theme="patea"] {
+  /* Fonts */
+  --font-display: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--font-instrument-sans), "Helvetica Neue", Arial, sans-serif;
+  --display-weight: 500; /* Newsreader is never set above 500 here, never lighter */
+  --display-weight-soft: 500;
+  --display-tracking: -0.022em; /* --tracking-display */
+  --button-weight: 500;
+  --label-weight: 600;
+
+  /* Surfaces and text */
+  --background: #F7F1EA; /* linen */
+  --foreground: #252A38; /* soil-900, text-strong */
+  --card: #FDFAF6; /* paper */
+  --card-foreground: #252A38;
+  --popover: #FDFAF6;
+  --popover-foreground: #252A38;
+
+  /* Brand */
+  --primary: #4B2948; /* brand plum */
+  --primary-foreground: #FDFAF6;
+  --primary-hover: #33192F; /* plum-deep */
+  --secondary: #EBE2EA; /* plum-tint: selected surfaces */
+  --secondary-foreground: #33192F; /* plum-deep: text-selected */
+  --accent: #EDEFE7; /* sage-tint */
+  --accent-foreground: #63695B; /* sage-deep, 15% toward ink */
+  --muted: #E9E3DC; /* soil-100: surface-sunken */
+  --muted-foreground: #5E6473; /* soil-600: text-muted */
+
+  /* Lines and focus */
+  --border: rgba(37, 42, 56, 0.10); /* border-hairline */
+  --input: #5E6473; /* soil-600: a field boundary must reach 3:1 (border-soft is 1.4:1) */
+  --ring: #B45F7A; /* brand rose */
+  --border-strong: rgba(37, 42, 56, 0.10); /* the "ink" outline is the hairline */
+
+  /* Status */
+  --destructive: #33192F; /* plum-deep: danger is plum, not red */
+  --destructive-foreground: #FDFAF6;
+  --danger-surface: #EBE2EA; /* plum-tint, state-danger-soft: danger buttons and zones read as a different surface */
+  --success: #63695B; /* sage-deep, 15% toward ink (4.5:1 on sage-tint) */
+
+  /* Shape and depth */
+  --radius: calc(1rem / 1.4); /* cards use rounded-xl (1.4x): 16px */
+  --radius-button: 999px;
+  --radius-field: 0.375rem; /* radius-sm: .pa-input */
+  --radius-chip: 0.25rem; /* radius-xs: .pa-badge */
+  --ink-width: 1px;
+  --shadow-card: 0 1px 2px rgba(37, 42, 56, 0.04), 0 8px 24px rgba(37, 42, 56, 0.07);
+  --shadow-button: none;
+  --shadow-button-pressed: none;
+  --shadow-button-outline: none;
+  --shadow-button-outline-pressed: none;
+  --button-border: transparent;
+  --button-outline-border: var(--input);
+  --toggle-on: var(--secondary);
+  --press-shift: 0px;
+  --press-shift-x: 0px;
+  --hover-lift: 1px; /* --lift-hover */
+  --press-scale: 0.985;
+  --button-transition: transform, translate, scale, box-shadow, background-color, color;
+
+  /* Hero band and the four avatar / gift-tile tones */
+  --hero: #FDFAF6; /* paper under the bloom */
+  --hero-image: radial-gradient(120% 90% at 15% 0%, #FAEEF1, transparent 62%); /* --wash-bloom */
+  --tone-0-bg: #EBE2EA; /* plum-tint / plum-deep */
+  --tone-0-fg: #33192F;
+  --tone-1-bg: #F6E5EA; /* rose-tint / rose-deep */
+  --tone-1-fg: #8B4459;
+  --tone-2-bg: #EDEFE7; /* sage-tint / sage-deep */
+  --tone-2-fg: #63695B;
+  --tone-3-bg: #E3E5EA; /* ink-tint / ink-deep */
+  --tone-3-fg: #14171F;
+
+  /* Sidebar and charts (shadcn compat): usually left as these mappings */
+  --sidebar: var(--background);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--muted);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: color-mix(in oklab, var(--primary) 30%, transparent);
+  --chart-1: var(--primary);
+  --chart-2: var(--success);
+  --chart-3: var(--hero);
+  --chart-4: var(--destructive);
+  --chart-5: var(--muted-foreground);
+}
+
+/* Reduced motion: no button lift or squeeze, whatever the theme (placed after every theme block) */
+@media (prefers-reduced-motion: reduce) {
+  :root,
+  [data-theme] {
+    --hover-lift: 0px;
+    --press-scale: 1;
+  }
+}
+
+/*
+ * Ink treatment: outline and offset shadows, all from theme tokens. A theme
+ * with a flat look sets --ink-width, --shadow-card and --shadow-button to 0 / none.
+ */
+@utility ink-card {
+  @apply border-(length:--ink-width) border-border-strong shadow-card ring-0;
+}
+@utility ink-button {
+  @apply rounded-button border-(length:--ink-width) border-(--button-border) shadow-button duration-100;
+  transition-property: var(--button-transition);
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  @apply hover:-translate-y-(--hover-lift) active:translate-x-(--press-shift-x) active:translate-y-(--press-shift) active:scale-(--press-scale) active:shadow-button-pressed;
+}
+/* Outline variant: its own border and a neutral shadow (Confetti's --shadow-button follows --primary) */
+@utility ink-button-outline {
+  @apply border-(--button-outline-border) shadow-button-outline active:shadow-button-outline-pressed;
+}
+/* Hero band: a solid --hero, plus --hero-image when the theme has a gradient */
+@utility bg-hero {
+  background-color: var(--hero);
+  background-image: var(--hero-image);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans, ui-sans-serif, system-ui, -apple-system, sans-serif);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/*
+ * First Steps (the onboarding checklist, #98). Every use pairs the animation with
+ * motion-reduce:animate-none, and each one ends where the element rests.
+ */
+@keyframes fs-pop { 0% { transform: scale(.6); opacity: 0 } 60% { transform: scale(1.12); opacity: 1 } 100% { transform: scale(1) } }
+@keyframes fs-stamp { 0% { transform: scale(1.6) rotate(-8deg); opacity: 0 } 70% { transform: scale(.94) rotate(-3deg); opacity: 1 } 100% { transform: scale(1) rotate(-3deg); opacity: 1 } }
+@keyframes fs-ring { 0% { transform: scale(.8); opacity: .7 } 100% { transform: scale(2.1); opacity: 0 } }
+@keyframes fs-rise { 0% { transform: translateY(8px); opacity: 0 } 100% { transform: translateY(0); opacity: 1 } }
+@keyframes fs-nudge { 0%, 100% { transform: translateY(0) } 30% { transform: translateY(-6px) } 60% { transform: translateY(0) } 80% { transform: translateY(-3px) } }
+@keyframes fs-fall { 0% { transform: translateY(-140px) rotate(0deg); opacity: 0 } 15% { opacity: 1 } 100% { transform: translateY(0) rotate(var(--fs-turn)); opacity: 1 } }

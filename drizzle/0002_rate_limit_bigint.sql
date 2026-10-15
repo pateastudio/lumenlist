@@ -1,0 +1,2 @@
+-- contract: widens rate_limit.last_request from integer to bigint (Better Auth stores milliseconds since the epoch, which overflow 32 bits). The table holds only short-lived rate-limit counters and is empty in every environment as of 2026-10-08, so nothing is lost and no running code reads the old type.
+ALTER TABLE "rate_limit" ALTER COLUMN "last_request" SET DATA TYPE bigint;

@@ -1,0 +1,8 @@
+# pnpm settings (STANDARDS.md). nodeLinker: hoisted gives a flat node_modules, which the zipped
+# OpenNext bundle needs: with pnpm's nested layout the Lambda crashes with "Cannot find module".
+nodeLinker: hoisted
+allowBuilds:
+  esbuild: false
+  unrs-resolver: false
+  # Next's image optimizer is off (next.config.ts: images.unoptimized), so sharp is never used.
+  sharp: false

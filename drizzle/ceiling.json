@@ -1,0 +1,9 @@
+{
+  "ceiling": "0007",
+  "enforceFrom": "0001",
+  "note": "0000 and 0001 are the Neon baseline (Phase 2); 0002 widens rate_limit.last_request (a reviewed contract step); 0003 lets app_user read the migrations table for the health check; 0004 drops unused policies and narrows claim updates (a reviewed contract step). From 0001 on, a destructive statement needs a -- contract: marker, and raising the ceiling past one is a reviewed change. 0005 adds the onboarding table with own-row policies (additive; #98). 0006 makes new join codes 32 hex characters and adds app_rate_limit with take_rate_limit() (additive; #154). 0007 narrows profiles_select to your own profile and people who share a family with you, through the shares_family_with() definer function (a reviewed contract step; the previous release reads only those profiles; #160).",
+  "accepted": {
+    "0001_roles_rls_functions": "The only flagged statement is the DELETE inside create_invite()'s body, which runs when a member re-invites an address (replacing the stale invite), not when the migration applies. The migration itself deletes nothing. Reviewed 2026-10-08.",
+    "0006_join_codes_rate_limits": "The only flagged statement is the DELETE inside take_rate_limit()'s body, which clears rate-limit keys that expired over an hour ago when the function runs, not when the migration applies. The migration itself deletes nothing. Reviewed 2026-10-14."
+  }
+}
