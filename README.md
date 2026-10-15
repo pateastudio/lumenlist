@@ -8,7 +8,7 @@ LumenList is live at https://lumenlist.app.
 
 A two-minute walkthrough: adding a gift from a link, claiming one from someone else's list, and what the owner sees afterwards.
 
-https://github.com/user-attachments/assets/4eeed28a-0071-4b9c-ae48-fc7bf7b53cd3
+https://github.com/user-attachments/assets/3c2d1f96-4db9-44d9-9f2d-37412ceec536
 
 ## Features
 
